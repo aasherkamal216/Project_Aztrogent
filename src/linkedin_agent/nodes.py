@@ -1,63 +1,69 @@
-from langchain_community.tools.tavily_search import TavilySearchResults
-from langgraph.types import Command, interrupt
-
-from pydantic import BaseModel, Field
 from typing import Literal
 
-from langchain_core.messages import SystemMessage, HumanMessage
-from src.linkedin_agent.prompts import ANALYST_PROMPT
-from src.linkedin_agent.models import llama_model
+from langchain_core.messages import HumanMessage, AIMessage
+from langgraph.types import Command, interrupt
+
 from src.linkedin_agent.state import LinkedInGraphState
+from src.linkedin_agent.prompts import POST_REFINER_PROMPT
 
-tavily_tool = TavilySearchResults(max_results=5)
+## Post Writer Node
+def post_writer(
+    state: LinkedInGraphState,
+) -> Command[Literal["web_search", "style_refiner"]]:
 
-def web_search(state: LinkedInGraphState) -> Command[Literal["post_writer"]]:
-    # results = tavily_tool.invoke(state['messages'])
+    response = "invoking llm for post writing..."
+    last_message = state["messages"][-1]
 
-    return Command(
-        # state update
-        update={"context": "results"},
-        goto="post_writer"
+    if isinstance(last_message, AIMessage):
+        if last_message.tool_calls:
+            return Command(goto="web_search")
+    return Command(update={"post": response}, goto="style_refiner")
+
+## Post Style Refiner Node
+def style_refiner(state: LinkedInGraphState) -> Command[Literal["human_feedback"]]:
+    prompt = POST_REFINER_PROMPT.format(post=state["post"])
+    # response = gemini_model.invoke(prompt)
+
+    return Command(update={"refined_post": "the refined post..."}, goto="human_feedback")
+
+## Human Feedback Node (Human-in-the-loop)
+def human_feedback(
+    state: LinkedInGraphState,
+) -> Command[Literal["upload_post", "style_refiner", "__end__"]]:
+
+    review = interrupt(
+        {"post": state["post"], "is_approved": "Do you approve the post? [y/n]: "}
     )
+    if review['is_approved'].lower().strip() == "y":
+        decision = interrupt({"decision": "Should I upload the post? [y/n]: "})
 
-def post_writer(state: LinkedInGraphState)-> Command[Literal["post_analyzer"]]:
-    
-    return Command(
-        update={"post": state['messages'][-1]},
-        goto="post_analyzer"
-    )
+        if decision["decision"].lower().strip() == "y":
+            return Command(update={"status": "uploading"}, goto="upload_post")
 
+        elif decision["decision"].lower().strip() == "n":
+            return Command(
+                update={
+                    "messages": [HumanMessage(content="The post has been written!")],
+                    "status": "completed",
+                },
+                goto="__end__",
+            )
+    elif review['is_approved'].lower().strip() == "n":
+        feedback = interrupt("Please provide feedback about the post: ")
+        return Command(
+            update={"user_feedback": feedback[next(iter(feedback))], "status": "refining"},
+            goto="style_refiner",
+        )
 
-class PostAnalystSchema(BaseModel):
-    next_node: Literal["post_writer", "upload_post"]
-    feedback: str = Field(description="The feedback about the post.")
-
-post_analyst_llm = llama_model.with_structured_output(PostAnalystSchema)
-
-def post_analyzer(state: LinkedInGraphState) -> Command[Literal["upload_post", "post_writer"]]:
-    
-    post_analysis = post_analyst_llm.invoke([SystemMessage(content=ANALYST_PROMPT)] + [state["post"]])
-
-    user_feedback = ""
-    if post_analysis.next_node == "post_writer":
-        goto = "post_writer"
-        user_feedback = interrupt("Please provide feedback about the post:")
-
-    elif post_analysis.next_node == "upload_post":
-        goto = "upload_post"
-
-    return Command(
-        update={"llm_feedback": post_analysis.feedback, 
-                "user_feedback": user_feedback
-               },
-        goto=goto
-    )
-
-
+## Post Uploading Node
 def upload_post(state: LinkedInGraphState) -> Command[Literal["__end__"]]:
-    
+
     return Command(
-        update={"messages": [HumanMessage(content="The post has successfully been posted!")]},
-        goto="__end__"
+        update={
+            "messages": [
+                HumanMessage(content="The post has successfully been posted!", name="LinkedIn Agent")
+            ],
+            "status": "completed",
+        },
+        goto="__end__",
     )
-    
