@@ -8,7 +8,7 @@ from react_agent import graph
 @unit
 async def test_react_agent_simple_passthrough() -> None:
     res = await graph.ainvoke(
-        {"messages": [("user", "Who is the founder of Tesla?")]},
+        {"messages": [("user", "Who is the founder of SpaceX?")]},
         {"configurable": {"system_prompt": "You are a helpful AI assistant."}},
     )
 
