@@ -15,7 +15,7 @@ class Configuration:
     """The configuration for the agent."""
 
     system_prompt: str = field(
-        default=prompts.SYSTEM_PROMPT,
+        default=prompts.LINKEDIN_AGENT_PROMPT,
         metadata={
             "description": "The system prompt to use for the agent's interactions. "
             "This prompt sets the context and behavior for the agent."
