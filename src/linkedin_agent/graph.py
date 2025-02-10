@@ -3,6 +3,7 @@ from langgraph.graph import StateGraph, START, END
 
 from linkedin_agent.configuration import Configuration
 from linkedin_agent.state import LinkedInGraphState
+from langgraph.checkpoint.memory import MemorySaver
 from linkedin_agent.nodes import (
     linkedin_agent,
     action_node,
@@ -21,6 +22,6 @@ builder.add_node("human_feedback_node", human_feedback)
 builder.add_edge(START, "linkedin_agent")
 
 # Compile the builder into an executable graph
-graph = builder.compile()
+graph = builder.compile(checkpointer=MemorySaver())
 
 graph.name = "LinkedIn Agent"

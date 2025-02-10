@@ -43,7 +43,7 @@ class DELEGATE_TO_COLLEAGUE_AGENTS(BaseModel):
     Tool to delegate a task to a colleague agents team.
     Args:
         team (Literal["LinkedIn", "Gmail", "GitHub"]): The team name of the colleague agents
-        task (str): Detailed description of the task to be completed by the agents team.
+        message (str): The message / description of the task to be completed by the agents team.
     """
     team: Literal["LinkedIn", "Gmail", "GitHub"]
-    task: str
+    message: str

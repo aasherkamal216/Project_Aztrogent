@@ -14,7 +14,7 @@ def linkedin_subgraph(state: MessagesState):
         if args["team"] == "LinkedIn":
             
             response = linkedin_graph.invoke(
-                {"messages": [HumanMessage(content=args["task"])]}
+                {"messages": [HumanMessage(content=args["message"])]}
             )
             result.append(ToolMessage(content=response["messages"][-1].content,
             name=call["name"],
