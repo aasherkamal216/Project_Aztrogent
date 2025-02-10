@@ -157,3 +157,6 @@ cython_debug/
 
 # LangGraph API
 .langgraph_api
+
+# Composio
+.composio.lock

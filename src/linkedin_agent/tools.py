@@ -17,7 +17,7 @@ from composio_langgraph import Action, ComposioToolSet
 
 import os
 from pydantic import BaseModel, Field
-from react_agent.configuration import Configuration
+from linkedin_agent.configuration import Configuration
 
 
 async def search(

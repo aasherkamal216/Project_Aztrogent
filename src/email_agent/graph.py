@@ -11,10 +11,10 @@ from langchain_core.runnables import RunnableConfig
 from langgraph.graph import StateGraph
 from langgraph.prebuilt import ToolNode
 
-from src.email_agent.configuration import Configuration
-from src.email_agent.state import InputState, State
-from src.email_agent.tools import TOOLS
-from src.email_agent.utils import load_chat_model
+from  email_agent.configuration import Configuration
+from  email_agent.state import InputState, State
+from  email_agent.tools import TOOLS
+from  email_agent.utils import load_chat_model
 
 
 async def call_model(

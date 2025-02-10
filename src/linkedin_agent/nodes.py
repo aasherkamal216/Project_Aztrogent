@@ -4,10 +4,10 @@ from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
 from langgraph.types import Command, interrupt
 from langgraph.prebuilt import create_react_agent
 
-from src.linkedin_agent.state import LinkedInGraphState
-from src.linkedin_agent.prompts import LINKEDIN_AGENT_PROMPT, POST_WRITER_PROMPT
-from src.linkedin_agent.models import gemini_model, llama_model
-from src.linkedin_agent.tools import tools_by_name, linkedin_tools, POST_WRITER, search
+from linkedin_agent.state import LinkedInGraphState
+from linkedin_agent.prompts import LINKEDIN_AGENT_PROMPT, POST_WRITER_PROMPT
+from linkedin_agent.models import gemini_model, llama_model
+from linkedin_agent.tools import tools_by_name, linkedin_tools, POST_WRITER, search
 
 ## Bind tools to the main agent
 main_linkedin_agent = llama_model.bind_tools([POST_WRITER] + linkedin_tools)

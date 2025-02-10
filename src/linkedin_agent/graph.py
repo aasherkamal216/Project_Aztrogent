@@ -1,9 +1,9 @@
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph import StateGraph, START, END
 
-from src.linkedin_agent.configuration import Configuration
-from src.linkedin_agent.state import LinkedInGraphState
-from src.linkedin_agent.nodes import (
+from linkedin_agent.configuration import Configuration
+from linkedin_agent.state import LinkedInGraphState
+from linkedin_agent.nodes import (
     linkedin_agent,
     action_node,
     post_writer,

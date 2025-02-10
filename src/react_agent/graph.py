@@ -8,15 +8,40 @@ from typing import Dict, List, Literal, cast
 
 from langchain_core.messages import AIMessage
 from langchain_core.runnables import RunnableConfig
-from langgraph.graph import StateGraph
+from langgraph.graph import StateGraph, MessagesState, START, END
 from langgraph.prebuilt import ToolNode
 
 from react_agent.configuration import Configuration
 from react_agent.state import InputState, State
-from react_agent.tools import TOOLS
+from react_agent.nodes import linkedin_subgraph, gmail_subgraph, github_subgraph, update_memory
+from react_agent.tools import TOOLS, DELEGATE_TO_COLLEAGUE_AGENTS
 from react_agent.utils import load_chat_model
 
-# Define the function that calls the model
+from typing import Literal
+
+team_graph_name_map = {"LinkedIn": "linkedin_subgraph", "Gmail": "gmail_subgraph", "GitHub": "github_subgraph"}
+## Conditional Edge
+async def tools_condition(
+    state: MessagesState,
+) -> Literal[
+    "linkedin_subgraph", "update_memory", "gmail_subgraph", "github_subgraph", END
+]:
+    """
+    Determine if the conversation should continue to tools or end
+    """
+    messages = state["messages"]
+    last_message = messages[-1]
+
+    if hasattr(last_message, 'tool_calls') and last_message.tool_calls:
+        for call in last_message.tool_calls:
+            tool_name = call.get("name")
+            if tool_name == "DELEGATE_TO_COLLEAGUE_AGENTS":
+
+                return team_graph_name_map[call["args"]["team"]]
+            else:
+                return "update_memory"
+
+    return END
 
 
 async def call_model(
@@ -36,7 +61,7 @@ async def call_model(
     configuration = Configuration.from_runnable_config(config)
 
     # Initialize the model with tool binding. Change the model or add more tools here.
-    model = load_chat_model(configuration.model).bind_tools(TOOLS)
+    model = load_chat_model(configuration.model).bind_tools(TOOLS + [DELEGATE_TO_COLLEAGUE_AGENTS])
 
     # Format the system prompt. Customize this to change the agent's behavior.
     system_message = configuration.system_prompt.format(
@@ -47,12 +72,12 @@ async def call_model(
     response = cast(
         AIMessage,
         await model.ainvoke(
-            [{"role": "system", "content": system_message}, *state.messages], config
+            [{"role": "system", "content": system_message}, *state["messages"]], config
         ),
     )
 
     # Handle the case when it's the last step and the model still wants to use a tool
-    if state.is_last_step and response.tool_calls:
+    if state["is_last_step"] and response.tool_calls:
         return {
             "messages": [
                 AIMessage(
@@ -68,15 +93,30 @@ async def call_model(
 
 # Define a new graph
 
-builder = StateGraph(State, input=InputState, config_schema=Configuration)
+workflow = StateGraph(State, input=InputState, config_schema=Configuration)
 
-# Define the two nodes we will cycle between
-builder.add_node(call_model)
-builder.add_node("tools", ToolNode(TOOLS))
+workflow.add_node("AZTROGENT", call_model)
+# workflow.add_node("linkedin_agents", builder.compile())
+# workflow.add_node("email_agent", email_agents_as_tool)
+workflow.add_node("linkedin_subgraph", linkedin_subgraph)
+workflow.add_node("gmail_subgraph", gmail_subgraph)
+workflow.add_node("github_subgraph", github_subgraph)
+workflow.add_node("update_memory", update_memory)
 
-# Set the entrypoint as `call_model`
-# This means that this node is the first one called
-builder.add_edge("__start__", "call_model")
+workflow.add_edge(START, "AZTROGENT")
+workflow.add_conditional_edges("AZTROGENT", tools_condition, ["linkedin_subgraph", "update_memory", "gmail_subgraph", "github_subgraph", END])
+workflow.add_edge("linkedin_subgraph", "AZTROGENT")
+workflow.add_edge("gmail_subgraph", "AZTROGENT")
+workflow.add_edge("github_subgraph", "AZTROGENT")
+workflow.add_edge("update_memory", "AZTROGENT")
+
+# # Define the two nodes we will cycle between
+# builder.add_node(call_model)
+# builder.add_node("tools", ToolNode(TOOLS))
+
+# # Set the entrypoint as `call_model`
+# # This means that this node is the first one called
+# builder.add_edge("__start__", "call_model")
 
 
 def route_model_output(state: State) -> Literal["__end__", "tools"]:
@@ -102,21 +142,21 @@ def route_model_output(state: State) -> Literal["__end__", "tools"]:
     return "tools"
 
 
-# Add a conditional edge to determine the next step after `call_model`
-builder.add_conditional_edges(
-    "call_model",
-    # After call_model finishes running, the next node(s) are scheduled
-    # based on the output from route_model_output
-    route_model_output,
-)
+# # Add a conditional edge to determine the next step after `call_model`
+# builder.add_conditional_edges(
+#     "call_model",
+#     # After call_model finishes running, the next node(s) are scheduled
+#     # based on the output from route_model_output
+#     route_model_output,
+# )
 
 # Add a normal edge from `tools` to `call_model`
 # This creates a cycle: after using tools, we always return to the model
-builder.add_edge("tools", "call_model")
+# builder.add_edge("tools", "call_model")
 
 # Compile the builder into an executable graph
 # You can customize this by adding interrupt points for state updates
-graph = builder.compile(
+graph = workflow.compile(
     interrupt_before=[],  # Add node names here to update state before they're called
     interrupt_after=[],  # Add node names here to update state after they're called
 )

@@ -7,7 +7,7 @@ from typing import Annotated, Optional
 
 from langchain_core.runnables import RunnableConfig, ensure_config
 
-from src.linkedin_agent import prompts
+from linkedin_agent import prompts
 
 
 @dataclass(kw_only=True)
