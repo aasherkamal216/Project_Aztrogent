@@ -12,7 +12,7 @@ from linkedin_agent.nodes import (
 )
 
 # Build graph
-builder = StateGraph(LinkedInGraphState)
+builder = StateGraph(LinkedInGraphState, config_schema=Configuration)
 
 builder.add_node("linkedin_agent", linkedin_agent)
 builder.add_node("action_executor", action_node)
