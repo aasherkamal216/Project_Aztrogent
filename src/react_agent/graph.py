@@ -1,6 +1,4 @@
-"""Define a custom Reasoning and Action agent.
-
-Works with a chat model with tool calling support.
+"""This module defines the main Aztrogent Agent.
 """
 
 from datetime import datetime, timezone
@@ -9,7 +7,6 @@ from typing import Dict, List, Literal, cast
 from langchain_core.messages import AIMessage
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph import StateGraph, MessagesState, START, END
-from langgraph.prebuilt import ToolNode
 
 from react_agent.configuration import Configuration
 from react_agent.state import InputState, State
@@ -17,9 +14,8 @@ from react_agent.nodes import linkedin_subgraph, gmail_subgraph, github_subgraph
 from react_agent.tools import TOOLS, DELEGATE_TO_COLLEAGUE_AGENTS
 from react_agent.utils import load_chat_model
 
-from typing import Literal
-
 team_graph_name_map = {"LinkedIn": "linkedin_subgraph", "Gmail": "gmail_subgraph", "GitHub": "github_subgraph"}
+
 ## Conditional Edge
 async def tools_condition(
     state: MessagesState,
@@ -43,7 +39,7 @@ async def tools_condition(
 
     return END
 
-
+## Model Node
 async def call_model(
     state: State, config: RunnableConfig
 ) -> Dict[str, List[AIMessage]]:
