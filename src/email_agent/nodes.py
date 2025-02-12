@@ -42,7 +42,7 @@ def gmail_agent(
 
 ## Action Node to execute tool calls
 def action_node(
-    state: GmailGraphState, config: RunnableConfig
+    state: GmailGraphState
 ) -> Command[Literal["gmail_agent"]]:
 
     tool_calls = state["messages"][-1].tool_calls
@@ -51,19 +51,27 @@ def action_node(
     for call in tool_calls:
         tool_name = call["name"]
         args = call.get("args")
-        ## Confirm action by user
-        action = interrupt({
-            "tool_name": tool_name.replace("_", " ").title() ,
-            "confirmation": "Do you confirm the action? [y/n]: "
+        
+        while True:
+            ## Confirm action by user
+            action = interrupt({
+                "tool_name": tool_name.replace("_", " ").title(),
+                "confirmation": "Do you confirm the action? [y/n]: "
             })
-        decision = next(iter(action))
-        if decision.lower().strip() == "y":
-            output = tools_by_name[tool_name].invoke(args)
-            result.append(ToolMessage(content=output, tool_call_id=call["id"], name=tool_name))
-        elif decision.lower().strip() == "n":
-            output = "User declined to perform this action."
-
-            result.append(ToolMessage(content=output, tool_call_id=call["id"], name=tool_name))
+            decision = list(action.values())[0].lower().strip()
+            
+            if decision == "y":
+                output = tools_by_name[tool_name].invoke(args)
+                break
+            elif decision == "n":
+                output = "User declined to perform this action."
+                break
+            else:
+                print("Please enter 'y' or 'n'")
+                continue
+            
+        result.append(ToolMessage(content=output, tool_call_id=call["id"], name=tool_name))
+    
     return Command(
         goto="gmail_agent",
         update={"messages": result}

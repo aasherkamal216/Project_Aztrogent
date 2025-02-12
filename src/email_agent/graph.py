@@ -9,9 +9,8 @@ from email_agent.state import GmailGraphState
 from email_agent.nodes import gmail_agent, action_node
 
 
-builder = StateGraph(GmailGraphState, config_schema=Configuration)
 # Build graph
-builder = StateGraph(GmailGraphState)
+builder = StateGraph(GmailGraphState, config_schema=Configuration)
 
 builder.add_node("gmail_agent", gmail_agent)
 builder.add_node("action_executor", action_node)
