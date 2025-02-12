@@ -40,6 +40,7 @@ packages = ["react_agent", "email_agent", "linkedin_agent"]
 "react_agent" = "src/react_agent"
 "email_agent" = "src/email_agent"
 "linkedin_agent" = "src/linkedin_agent"
+"github_agent" = "src/github_agent"
 
 
 [tool.setuptools.package-data]
