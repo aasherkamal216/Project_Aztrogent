@@ -11,7 +11,7 @@ from langgraph.graph import StateGraph, MessagesState, START, END
 from aztrogent_agent.configuration import Configuration
 from aztrogent_agent.state import InputState, State
 from aztrogent_agent.nodes import linkedin_subgraph, gmail_subgraph, github_subgraph, update_memory
-from aztrogent_agent.tools import TOOLS, DELEGATE_TO_COLLEAGUE_AGENTS
+from aztrogent_agent.tools import TOOLS, COLLABORATE_WITH_TEAM
 from aztrogent_agent.utils import load_chat_model
 
 team_graph_name_map = {"LinkedIn": "linkedin_subgraph", "Gmail": "gmail_subgraph", "GitHub": "github_subgraph"}
@@ -31,7 +31,7 @@ async def tools_condition(
     if hasattr(last_message, 'tool_calls') and last_message.tool_calls:
         for call in last_message.tool_calls:
             tool_name = call.get("name")
-            if tool_name == "DELEGATE_TO_COLLEAGUE_AGENTS":
+            if tool_name == "COLLABORATE_WITH_TEAM":
 
                 return team_graph_name_map[call["args"]["team"]]
             else:
@@ -57,11 +57,14 @@ async def call_model(
     configuration = Configuration.from_runnable_config(config)
 
     # Initialize the model with tool binding. Change the model or add more tools here.
-    model = load_chat_model(configuration.model).bind_tools(TOOLS + [DELEGATE_TO_COLLEAGUE_AGENTS])
+    model = load_chat_model(configuration.model).bind_tools(TOOLS + [COLLABORATE_WITH_TEAM])
 
     # Format the system prompt. Customize this to change the agent's behavior.
     system_message = configuration.system_prompt.format(
-        system_time=datetime.now(tz=timezone.utc).isoformat()
+        system_time=datetime.now(tz=timezone.utc).isoformat(),
+        user_name=configuration.user_name,
+        user_email=configuration.user_email,
+        user_role=configuration.user_role
     )
 
     # Get the model's response

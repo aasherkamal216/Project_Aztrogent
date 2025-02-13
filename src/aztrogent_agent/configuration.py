@@ -23,7 +23,7 @@ class Configuration:
     )
 
     model: Annotated[str, {"__template_metadata__": {"kind": "llm"}}] = field(
-        default="google_genai/gemini-2.0-flash-exp",
+        default="google_genai/gemini-2.0-flash",
         metadata={
             "description": "The name of the language model to use for the agent's main interactions. "
             "Should be in the form: provider/model-name."
@@ -31,10 +31,19 @@ class Configuration:
     )
 
     max_search_results: int = field(
-        default=6,
+        default=4,
         metadata={
             "description": "The maximum number of search results to return for each search query."
         },
+    )
+    user_name: str = field(
+        default="Aasher Kamal"
+    )
+    user_email: str = field(
+        default="aasherkamal786@gmail.com"
+    )
+    user_role: str = field(
+        default="GenAI Developer"
     )
 
     @classmethod

@@ -4,11 +4,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field, fields
 from typing import Annotated, Optional
+import os, dotenv
 
 from langchain_core.runnables import RunnableConfig, ensure_config
 
 from linkedin_agent import prompts
 
+
+dotenv.load_dotenv()
 
 @dataclass(kw_only=True)
 class Configuration:
@@ -23,7 +26,7 @@ class Configuration:
     )
 
     model: Annotated[str, {"__template_metadata__": {"kind": "llm"}}] = field(
-        default="google_genai/gemini-2.0-flash-exp",
+        default="google_genai/gemini-2.0-flash",
         metadata={
             "description": "The name of the language model to use for the agent's main interactions. "
             "Should be in the form: provider/model-name."
@@ -31,12 +34,14 @@ class Configuration:
     )
 
     max_search_results: int = field(
-        default=6,
+        default=4,
         metadata={
             "description": "The maximum number of search results to return for each search query."
         },
     )
-
+    author_id: str = field(
+        default=os.getenv("LINKEDIN_AUTHOR_ID"),
+    )
     @classmethod
     def from_runnable_config(
         cls, config: Optional[RunnableConfig] = None

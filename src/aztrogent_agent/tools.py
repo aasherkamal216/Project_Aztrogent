@@ -33,9 +33,9 @@ TOOLS: List[Callable[..., Any]] = [search]
 
 
 @tool
-class DELEGATE_TO_COLLEAGUE_AGENTS(BaseModel):
+class COLLABORATE_WITH_TEAM(BaseModel):
     """
-    Tool to delegate a task to a colleague agents team.
+    Tool to delegate a task to colleague agents team.
     Args:
         team (Literal["LinkedIn", "Gmail", "GitHub"]): The team name of the colleague agents
         message (str): The message / description of the task to be completed by the agents team.

@@ -3,10 +3,12 @@ from typing import Literal
 from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
 from langgraph.types import Command, interrupt
 from langgraph.prebuilt import create_react_agent
+from langchain_core.runnables import RunnableConfig
 
+from linkedin_agent.configuration import Configuration
 from linkedin_agent.state import LinkedInGraphState
 from linkedin_agent.prompts import LINKEDIN_AGENT_PROMPT, POST_WRITER_PROMPT
-from linkedin_agent.models import gemini_model, llama_model
+from linkedin_agent.models import llama_model
 from linkedin_agent.tools import tools_by_name, linkedin_tools, POST_WRITER, search
 
 ## Bind tools to the main agent
@@ -15,10 +17,17 @@ main_linkedin_agent = llama_model.bind_tools([POST_WRITER] + linkedin_tools)
 ## Main LinkedIn Agent
 def linkedin_agent(
     state: LinkedInGraphState,
+    config: RunnableConfig,
 ) -> Command[Literal["writer_agent", "__end__", "action_executor"]]:
+    configuration = Configuration.from_runnable_config(config)
     # Calling the main LinkedIn Agent
     response = main_linkedin_agent.invoke(
-        [SystemMessage(content=LINKEDIN_AGENT_PROMPT)] + state["messages"]
+        [
+            SystemMessage(
+                content=LINKEDIN_AGENT_PROMPT.format(author_id=configuration.author_id)
+            )
+        ]
+        + state["messages"]
     )
     # Check for tool calls
     if hasattr(response, "tool_calls") and response.tool_calls:
