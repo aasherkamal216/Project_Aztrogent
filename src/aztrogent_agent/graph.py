@@ -8,11 +8,11 @@ from langchain_core.messages import AIMessage
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph import StateGraph, MessagesState, START, END
 
-from react_agent.configuration import Configuration
-from react_agent.state import InputState, State
-from react_agent.nodes import linkedin_subgraph, gmail_subgraph, github_subgraph, update_memory
-from react_agent.tools import TOOLS, DELEGATE_TO_COLLEAGUE_AGENTS
-from react_agent.utils import load_chat_model
+from aztrogent_agent.configuration import Configuration
+from aztrogent_agent.state import InputState, State
+from aztrogent_agent.nodes import linkedin_subgraph, gmail_subgraph, github_subgraph, update_memory
+from aztrogent_agent.tools import TOOLS, DELEGATE_TO_COLLEAGUE_AGENTS
+from aztrogent_agent.utils import load_chat_model
 
 team_graph_name_map = {"LinkedIn": "linkedin_subgraph", "Gmail": "gmail_subgraph", "GitHub": "github_subgraph"}
 

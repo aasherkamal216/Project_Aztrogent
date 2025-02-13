@@ -1,7 +1,7 @@
 {
   "dependencies": ["."],
   "graphs": {
-    "main_agent": "./src/react_agent/graph.py:graph",
+    "aztrogent": "./src/aztrogent_agent/graph.py:graph",
     "email_agent": "./src/email_agent/graph.py:graph",
     "linkedin_agent": "./src/linkedin_agent/graph.py:graph",
     "github_agent": "./src/github_agent/graph.py:graph"

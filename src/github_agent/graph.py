@@ -1,4 +1,4 @@
-"""Define a graph for custom Email Agent.
+"""Define a graph for custom GitHub Agent.
 """
 
 from langchain_core.runnables import RunnableConfig
