@@ -1,3 +1,3 @@
 # **Project Aztrogent**
 
-![Aztrogent](static/aztrogent.png)
+![Aztrogent](/static/Aztrogent.png)
