@@ -1,18 +1,18 @@
 """This module provides tools for the Aztrogent.
 """
 
-from typing import Any, Callable, List, Optional, cast, Literal
+from typing import Any, Callable, List, Optional, Annotated, cast, Literal
 from pydantic import BaseModel, Field
 
 from langchain_community.tools.tavily_search import TavilySearchResults
 from langchain_core.runnables import RunnableConfig
-from langchain_core.tools import InjectedToolArg
-from typing_extensions import Annotated
+from langchain_core.tools import InjectedToolArg, tool
+from langmem import create_manage_memory_tool, create_search_memory_tool
 
-from langchain_core.tools import tool
 from aztrogent_agent.configuration import Configuration
+from settings import settings
 
-
+## Tool to Search the web
 async def search(
     query: str, *, config: Annotated[RunnableConfig, InjectedToolArg]
 ) -> Optional[list[dict[str, Any]]]:
@@ -30,8 +30,7 @@ async def search(
 
 TOOLS: List[Callable[..., Any]] = [search]
 
-
-
+## Tool to delegate a task to colleague agents team.
 @tool
 class COLLABORATE_WITH_TEAM(BaseModel):
     """
@@ -42,3 +41,9 @@ class COLLABORATE_WITH_TEAM(BaseModel):
     """
     team: Literal["LinkedIn", "Gmail", "GitHub"]
     message: str
+
+## Tools to create / search / manage memories
+MEMORY_TOOLS : list = [
+    create_manage_memory_tool(namespace=("memories", settings.USER_MEMORY_ID)),
+    create_search_memory_tool(namespace=("memories", settings.USER_MEMORY_ID))
+]

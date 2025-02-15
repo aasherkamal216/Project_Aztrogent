@@ -57,7 +57,3 @@ def github_subgraph(state: MessagesState):
             name=call["name"],
             tool_call_id=call["id"]))
     return {"messages": result}
-
-
-def memory_node(state: MessagesState):
-    pass

@@ -1,31 +1,38 @@
-"""This module defines the main Aztrogent Agent.
+"""This module defines the main Aztrogent Graph.
 """
-
 from datetime import datetime, timezone
 from typing import Dict, List, Literal, cast
 
 from langchain_core.messages import AIMessage
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph import StateGraph, MessagesState, START, END
+from langgraph.pregel import BaseStore
+from langgraph.store.memory import InMemoryStore
+from langgraph.prebuilt import ToolNode
 
 from aztrogent_agent.configuration import Configuration
 from aztrogent_agent.state import InputState, State
 from aztrogent_agent.nodes import (
     linkedin_subgraph,
     gmail_subgraph,
-    github_subgraph,
-    memory_node,
+    github_subgraph
 )
-from aztrogent_agent.tools import TOOLS, COLLABORATE_WITH_TEAM
+from aztrogent_agent.tools import TOOLS, COLLABORATE_WITH_TEAM, MEMORY_TOOLS
 from aztrogent_agent.utils import load_chat_model
+from settings import settings
 
-team_graph_name_map = {"LinkedIn": "linkedin_subgraph", "Gmail": "gmail_subgraph", "GitHub": "github_subgraph"}
+# Map team names to subgraph names
+team_graph_name_map = {
+    "LinkedIn": "linkedin_subgraph",
+    "Gmail": "gmail_subgraph",
+    "GitHub": "github_subgraph",
+}
 
 ## Conditional Edge
 async def tools_condition(
     state: MessagesState,
 ) -> Literal[
-    "linkedin_subgraph", "update_memory", "gmail_subgraph", "github_subgraph", END
+    "linkedin_subgraph", "memory_node", "gmail_subgraph", "github_subgraph", END
 ]:
     """
     Determine if the conversation should continue to tools or end
@@ -40,13 +47,15 @@ async def tools_condition(
 
                 return team_graph_name_map[call["args"]["team"]]
             else:
-                return "update_memory"
+                return "memory_node"
 
     return END
 
-## Model Node
+## Main Agent Calling Node
 async def call_model(
-    state: State, config: RunnableConfig
+    state: State, 
+    config: RunnableConfig,
+    store: BaseStore
 ) -> Dict[str, List[AIMessage]]:
     """Call the LLM powering our "agent".
 
@@ -60,9 +69,9 @@ async def call_model(
         dict: A dictionary containing the model's response message.
     """
     configuration = Configuration.from_runnable_config(config)
+    user_id = config["configurable"]["user_id"]
 
-    # Initialize the model with tool binding. Change the model or add more tools here.
-    model = load_chat_model(configuration.model).bind_tools(TOOLS + [COLLABORATE_WITH_TEAM])
+    model = load_chat_model(configuration.model).bind_tools([*TOOLS, COLLABORATE_WITH_TEAM, *MEMORY_TOOLS])
 
     # Format the system prompt. Customize this to change the agent's behavior.
     system_message = configuration.system_prompt.format(
@@ -102,15 +111,26 @@ workflow.add_node("AZTROGENT", call_model)
 workflow.add_node("linkedin_subgraph", linkedin_subgraph)
 workflow.add_node("gmail_subgraph", gmail_subgraph)
 workflow.add_node("github_subgraph", github_subgraph)
-workflow.add_node("memory_node", memory_node)
+workflow.add_node("memory_node", ToolNode(MEMORY_TOOLS))
 
 workflow.add_edge(START, "AZTROGENT")
-workflow.add_conditional_edges("AZTROGENT", tools_condition, ["linkedin_subgraph", "memory_node", "gmail_subgraph", "github_subgraph", END])
+workflow.add_conditional_edges(
+    "AZTROGENT",
+    tools_condition,
+    ["linkedin_subgraph", "memory_node", "gmail_subgraph", "github_subgraph", END],
+)
 workflow.add_edge("linkedin_subgraph", "AZTROGENT")
 workflow.add_edge("gmail_subgraph", "AZTROGENT")
 workflow.add_edge("github_subgraph", "AZTROGENT")
 workflow.add_edge("memory_node", "AZTROGENT")
 
+# Set up store and memory saver
+store = InMemoryStore(
+    index={
+        "dims": settings.EMBED_MODEL_DIMENSIONS,
+        "embed": settings.EMBEDDING_MODEL
+    }
+)
 # Compile the workflow into an executable graph
-graph = workflow.compile()
+graph = workflow.compile(store=store)
 graph.name = "Aztrogent"  # This customizes the name in LangSmith
