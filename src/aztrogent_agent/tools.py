@@ -10,7 +10,7 @@ from langchain_core.tools import InjectedToolArg, tool
 from langmem import create_manage_memory_tool, create_search_memory_tool
 
 from aztrogent_agent.configuration import Configuration
-from settings import settings
+from src.settings import settings
 
 ## Tool to Search the web
 async def search(
@@ -28,7 +28,7 @@ async def search(
     return cast(list[dict[str, Any]], result)
 
 
-TOOLS: List[Callable[..., Any]] = [search]
+OTHER_TOOLS: List[Callable[..., Any]] = [search]
 
 ## Tool to delegate a task to colleague agents team.
 @tool

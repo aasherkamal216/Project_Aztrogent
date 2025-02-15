@@ -17,9 +17,9 @@ from aztrogent_agent.nodes import (
     gmail_subgraph,
     github_subgraph
 )
-from aztrogent_agent.tools import TOOLS, COLLABORATE_WITH_TEAM, MEMORY_TOOLS
+from aztrogent_agent.tools import OTHER_TOOLS, COLLABORATE_WITH_TEAM, MEMORY_TOOLS
 from aztrogent_agent.utils import load_chat_model
-from settings import settings
+from src.settings import settings
 
 # Map team names to subgraph names
 team_graph_name_map = {
@@ -32,7 +32,7 @@ team_graph_name_map = {
 async def tools_condition(
     state: MessagesState,
 ) -> Literal[
-    "linkedin_subgraph", "memory_node", "gmail_subgraph", "github_subgraph", END
+    "linkedin_subgraph", "memory_node", "web_search", "gmail_subgraph", "github_subgraph", END
 ]:
     """
     Determine if the conversation should continue to tools or end
@@ -44,8 +44,11 @@ async def tools_condition(
         for call in last_message.tool_calls:
             tool_name = call.get("name")
             if tool_name == "COLLABORATE_WITH_TEAM":
-
                 return team_graph_name_map[call["args"]["team"]]
+
+            elif tool_name == "search":
+                return "web_search"
+
             else:
                 return "memory_node"
 
@@ -71,7 +74,7 @@ async def call_model(
     configuration = Configuration.from_runnable_config(config)
     user_id = config["configurable"]["user_id"]
 
-    model = load_chat_model(configuration.model).bind_tools([*TOOLS, COLLABORATE_WITH_TEAM, *MEMORY_TOOLS])
+    model = load_chat_model(configuration.model).bind_tools([COLLABORATE_WITH_TEAM, *MEMORY_TOOLS, *OTHER_TOOLS])
 
     # Format the system prompt. Customize this to change the agent's behavior.
     system_message = configuration.system_prompt.format(
@@ -112,17 +115,19 @@ workflow.add_node("linkedin_subgraph", linkedin_subgraph)
 workflow.add_node("gmail_subgraph", gmail_subgraph)
 workflow.add_node("github_subgraph", github_subgraph)
 workflow.add_node("memory_node", ToolNode(MEMORY_TOOLS))
+workflow.add_node("web_search", ToolNode(OTHER_TOOLS))
 
 workflow.add_edge(START, "AZTROGENT")
 workflow.add_conditional_edges(
     "AZTROGENT",
     tools_condition,
-    ["linkedin_subgraph", "memory_node", "gmail_subgraph", "github_subgraph", END],
+    ["linkedin_subgraph", "memory_node", "web_search", "gmail_subgraph", "github_subgraph", END],
 )
 workflow.add_edge("linkedin_subgraph", "AZTROGENT")
 workflow.add_edge("gmail_subgraph", "AZTROGENT")
 workflow.add_edge("github_subgraph", "AZTROGENT")
 workflow.add_edge("memory_node", "AZTROGENT")
+workflow.add_edge("web_search", "AZTROGENT")
 
 # Set up store and memory saver
 store = InMemoryStore(
