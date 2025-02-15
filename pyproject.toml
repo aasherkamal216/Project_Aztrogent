@@ -24,6 +24,8 @@ dependencies = [
     "google-generativeai>=0.8.4",
     "composio-langgraph>=0.7.1",
     "langgraph-supervisor>=0.0.1",
+    "langmem>=0.0.9",
+    "langchain-cohere>=0.4.2",
 ]
 
 
