@@ -59,5 +59,5 @@ def github_subgraph(state: MessagesState):
     return {"messages": result}
 
 
-def update_memory(state: MessagesState):
+def memory_node(state: MessagesState):
     pass

@@ -10,7 +10,12 @@ from langgraph.graph import StateGraph, MessagesState, START, END
 
 from aztrogent_agent.configuration import Configuration
 from aztrogent_agent.state import InputState, State
-from aztrogent_agent.nodes import linkedin_subgraph, gmail_subgraph, github_subgraph, update_memory
+from aztrogent_agent.nodes import (
+    linkedin_subgraph,
+    gmail_subgraph,
+    github_subgraph,
+    memory_node,
+)
 from aztrogent_agent.tools import TOOLS, COLLABORATE_WITH_TEAM
 from aztrogent_agent.utils import load_chat_model
 
@@ -97,14 +102,14 @@ workflow.add_node("AZTROGENT", call_model)
 workflow.add_node("linkedin_subgraph", linkedin_subgraph)
 workflow.add_node("gmail_subgraph", gmail_subgraph)
 workflow.add_node("github_subgraph", github_subgraph)
-workflow.add_node("update_memory", update_memory)
+workflow.add_node("memory_node", memory_node)
 
 workflow.add_edge(START, "AZTROGENT")
-workflow.add_conditional_edges("AZTROGENT", tools_condition, ["linkedin_subgraph", "update_memory", "gmail_subgraph", "github_subgraph", END])
+workflow.add_conditional_edges("AZTROGENT", tools_condition, ["linkedin_subgraph", "memory_node", "gmail_subgraph", "github_subgraph", END])
 workflow.add_edge("linkedin_subgraph", "AZTROGENT")
 workflow.add_edge("gmail_subgraph", "AZTROGENT")
 workflow.add_edge("github_subgraph", "AZTROGENT")
-workflow.add_edge("update_memory", "AZTROGENT")
+workflow.add_edge("memory_node", "AZTROGENT")
 
 # Compile the workflow into an executable graph
 graph = workflow.compile()
