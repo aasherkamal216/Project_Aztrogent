@@ -3,7 +3,7 @@ from datetime import datetime
 
 from github_agent.prompts import GITHUB_AGENT_PROMPT
 from github_agent.state import GitHubGraphState
-from github_agent.models import gemini_model
+from github_agent.models import model
 from github_agent.tools import tools_by_name, github_tools
 from github_agent.configuration import Configuration
 
@@ -13,7 +13,7 @@ from langchain_core.runnables import RunnableConfig
 
 
 ## Bind tools to the model
-agent_with_tools = gemini_model.bind_tools(github_tools)
+agent_with_tools = model.bind_tools(github_tools)
 
 ## Main GitHub Agent
 def github_agent(

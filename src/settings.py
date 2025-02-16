@@ -11,8 +11,11 @@ class Settings(BaseSettings):
     COMPOSIO_API_KEY: str
     TAVILY_API_KEY: str
 
-    GROQ_MODEL_NAME: str = "llama-3.3-70b-versatile"
-    GEMINI_MODEL_NAME: str = "gemini-2.0-flash"
+    MAIN_LLM_NAME: str = "gemini-2.0-flash"
+    MAIN_LLM_PROVIDER: str = "google_genai"
+
+    SECONDARY_LLM_NAME: str = "llama-3.3-70b-versatile"
+    SECONDARY_LLM_PROVIDER: str = "groq"
 
     EMBEDDING_MODEL: str = "cohere:embed-multilingual-v3.0"
     EMBED_MODEL_DIMENSIONS: int = 1024

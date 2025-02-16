@@ -3,7 +3,7 @@ from datetime import datetime
 
 from calendar_agent.prompts import CALENDAR_AGENT_PROMPT
 from calendar_agent.state import GoogleCalendarGraphState
-from calendar_agent.models import gemini_model
+from calendar_agent.models import model
 from calendar_agent.tools import calendar_read_tools, calendar_write_tools, write_tools_by_name
 from calendar_agent.configuration import Configuration
 
@@ -13,7 +13,7 @@ from langchain_core.runnables import RunnableConfig
 
 
 # Bind tools to the model
-agent_with_tools = gemini_model.bind_tools(calendar_read_tools + calendar_write_tools)
+agent_with_tools = model.bind_tools(calendar_read_tools + calendar_write_tools)
 
 ## Main Calendar Agent
 def calendar_agent(

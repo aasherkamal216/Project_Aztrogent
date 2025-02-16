@@ -3,7 +3,7 @@ from datetime import datetime
 
 from email_agent.prompts import EMAIL_AGENT_PROMPT
 from email_agent.state import GmailGraphState
-from email_agent.models import gemini_model
+from email_agent.models import model
 from email_agent.tools import tools_by_name, gmail_tools
 from email_agent.configuration import Configuration
 
@@ -13,7 +13,7 @@ from langchain_core.runnables import RunnableConfig
 
 
 ## Bind tools to the model
-agent_with_tools = gemini_model.bind_tools(gmail_tools)
+agent_with_tools = model.bind_tools(gmail_tools)
 
 ## Main Gmail Agent
 def gmail_agent(
