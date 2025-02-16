@@ -15,7 +15,8 @@ from aztrogent_agent.state import InputState, State
 from aztrogent_agent.nodes import (
     linkedin_subgraph,
     gmail_subgraph,
-    github_subgraph
+    github_subgraph,
+    calendar_subgraph
 )
 from aztrogent_agent.tools import OTHER_TOOLS, COLLABORATE_WITH_TEAM, MEMORY_TOOLS
 from aztrogent_agent.utils import load_chat_model
@@ -26,16 +27,24 @@ team_graph_name_map = {
     "LinkedIn": "linkedin_subgraph",
     "Gmail": "gmail_subgraph",
     "GitHub": "github_subgraph",
+    "Calendar": "calendar_subgraph"
 }
+
 
 ## Conditional Edge
 async def tools_condition(
     state: MessagesState,
 ) -> Literal[
-    "linkedin_subgraph", "memory_node", "web_search", "gmail_subgraph", "github_subgraph", END
+    "linkedin_subgraph",
+    "memory_node",
+    "web_search",
+    "gmail_subgraph",
+    "github_subgraph",
+    "calendar_subgraph",
+    END,
 ]:
     """
-    Determine if the conversation should continue to tools or end
+    Determine if the conversation should continue to tools/subgaphs or end
     """
     messages = state["messages"]
     last_message = messages[-1]
@@ -53,6 +62,7 @@ async def tools_condition(
                 return "memory_node"
 
     return END
+
 
 ## Main Agent Calling Node
 async def call_model(
@@ -74,9 +84,11 @@ async def call_model(
     configuration = Configuration.from_runnable_config(config)
     user_id = config["configurable"]["user_id"]
 
-    model = load_chat_model(configuration.model).bind_tools([COLLABORATE_WITH_TEAM, *MEMORY_TOOLS, *OTHER_TOOLS])
+    model = load_chat_model(configuration.model).bind_tools(
+        [COLLABORATE_WITH_TEAM, *MEMORY_TOOLS, *OTHER_TOOLS]
+    )
 
-    # Format the system prompt. Customize this to change the agent's behavior.
+    # Format the system prompt
     system_message = configuration.system_prompt.format(
         system_time=datetime.now(tz=timezone.utc).isoformat(),
         user_name=configuration.user_name,
@@ -114,6 +126,7 @@ workflow.add_node("AZTROGENT", call_model)
 workflow.add_node("linkedin_subgraph", linkedin_subgraph)
 workflow.add_node("gmail_subgraph", gmail_subgraph)
 workflow.add_node("github_subgraph", github_subgraph)
+workflow.add_node("calendar_subgraph", calendar_subgraph)
 workflow.add_node("memory_node", ToolNode(MEMORY_TOOLS))
 workflow.add_node("web_search", ToolNode(OTHER_TOOLS))
 
@@ -121,11 +134,20 @@ workflow.add_edge(START, "AZTROGENT")
 workflow.add_conditional_edges(
     "AZTROGENT",
     tools_condition,
-    ["linkedin_subgraph", "memory_node", "web_search", "gmail_subgraph", "github_subgraph", END],
+    [
+        "linkedin_subgraph",
+        "memory_node",
+        "web_search",
+        "gmail_subgraph",
+        "github_subgraph",
+        "calendar_subgraph",
+        END,
+    ],
 )
 workflow.add_edge("linkedin_subgraph", "AZTROGENT")
 workflow.add_edge("gmail_subgraph", "AZTROGENT")
 workflow.add_edge("github_subgraph", "AZTROGENT")
+workflow.add_edge("calendar_subgraph", "AZTROGENT")
 workflow.add_edge("memory_node", "AZTROGENT")
 workflow.add_edge("web_search", "AZTROGENT")
 
@@ -138,4 +160,4 @@ store = InMemoryStore(
 )
 # Compile the workflow into an executable graph
 graph = workflow.compile(store=store)
-graph.name = "Aztrogent"  # This customizes the name in LangSmith
+graph.name = "Aztrogent" 

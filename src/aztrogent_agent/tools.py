@@ -36,10 +36,10 @@ class COLLABORATE_WITH_TEAM(BaseModel):
     """
     Tool to delegate a task to colleague agents team.
     Args:
-        team (Literal["LinkedIn", "Gmail", "GitHub"]): The team name of the colleague agents
+        team (Literal["LinkedIn", "Gmail", "GitHub", "Calendar"]): The team name of the colleague agents
         message (str): The message / description of the task to be completed by the agents team.
     """
-    team: Literal["LinkedIn", "Gmail", "GitHub"]
+    team: Literal["LinkedIn", "Gmail", "GitHub", "Calendar"]
     message: str
 
 ## Tools to create / search / manage memories

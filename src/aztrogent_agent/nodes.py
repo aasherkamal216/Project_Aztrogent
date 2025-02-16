@@ -6,6 +6,7 @@ from langgraph.graph import MessagesState
 from linkedin_agent.graph import graph as linkedin_graph
 from email_agent.graph import graph as gmail_graph
 from github_agent.graph import graph as github_graph
+from calendar_agent.graph import graph as calendar_graph
 
 ######## LINKEDIN SUBGRAPH #########
 def linkedin_subgraph(state: MessagesState):
@@ -51,6 +52,23 @@ def github_subgraph(state: MessagesState):
         if args["team"] == "GitHub":
             
             response = github_graph.invoke(
+                {"messages": [HumanMessage(content=args["message"])]}
+            )
+            result.append(ToolMessage(content=response["messages"][-1].content,
+            name=call["name"],
+            tool_call_id=call["id"]))
+    return {"messages": result}
+
+######## GOOGLE CALENDAR SUBGRAPH #########
+def calendar_subgraph(state: MessagesState):
+    tool_calls = state["messages"][-1].tool_calls
+    result = []
+    for call in tool_calls:
+        args = call.get("args")
+        
+        if args["team"] == "Calendar":
+            
+            response = calendar_graph.invoke(
                 {"messages": [HumanMessage(content=args["message"])]}
             )
             result.append(ToolMessage(content=response["messages"][-1].content,
