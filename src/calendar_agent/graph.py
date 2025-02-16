@@ -1,9 +1,10 @@
 """Define a graph for custom Email Agent.
 """
-
+import httpx 
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph import StateGraph, START
 from langgraph.prebuilt import ToolNode
+from langgraph.pregel import RetryPolicy
 
 from calendar_agent.configuration import Configuration
 from calendar_agent.state import GoogleCalendarGraphState
@@ -16,7 +17,11 @@ builder = StateGraph(GoogleCalendarGraphState, config_schema=Configuration)
 
 builder.add_node("calendar_agent", calendar_agent)
 builder.add_node("retrieve_data", ToolNode(calendar_read_tools))
-builder.add_node("action_executor", action_node)
+builder.add_node(
+    "action_executor",
+    action_node,
+    retry=RetryPolicy(max_attempts=3, retry_on=httpx.ConnectError),
+)
 
 
 builder.add_edge(START, "calendar_agent")

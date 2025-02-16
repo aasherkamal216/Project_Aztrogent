@@ -1,17 +1,8 @@
 """This module provides tools for the Email Agent.
 """
 
-from typing import Any, Callable, List, Optional, cast
-
-from langchain_community.tools.tavily_search import TavilySearchResults
-from langchain_core.runnables import RunnableConfig
-from langchain_core.tools import InjectedToolArg
-from typing_extensions import Annotated
 from composio_langgraph import Action, ComposioToolSet
-
 import os
-from calendar_agent.configuration import Configuration
-
 
 composio_toolset = ComposioToolSet(api_key=os.getenv("COMPOSIO_API_KEY"))
 
