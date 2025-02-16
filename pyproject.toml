@@ -38,12 +38,13 @@ requires = ["setuptools>=73.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["aztrogent_agent", "email_agent", "linkedin_agent", "github_agent"]
+packages = ["aztrogent_agent", "email_agent", "linkedin_agent", "github_agent", "calendar_agent"]
 [tool.setuptools.package-dir]
 "aztrogent_agent" = "src/aztrogent_agent"
 "email_agent" = "src/email_agent"
 "linkedin_agent" = "src/linkedin_agent"
 "github_agent" = "src/github_agent"
+"calendar_agent" = "src/calendar_agent"
 
 
 [tool.setuptools.package-data]
