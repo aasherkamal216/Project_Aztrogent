@@ -1,8 +1,8 @@
 from typing import Literal
 from datetime import datetime
 
-from calendar_agent.prompts import EMAIL_AGENT_PROMPT
-from calendar_agent.state import GmailGraphState
+from calendar_agent.prompts import CALENDAR_AGENT_PROMPT
+from calendar_agent.state import GoogleCalendarGraphState
 from calendar_agent.models import gemini_model
 from calendar_agent.tools import calendar_read_tools, calendar_write_tools, write_tools_by_name
 from calendar_agent.configuration import Configuration
@@ -28,6 +28,7 @@ def calendar_agent(
                 content=CALENDAR_AGENT_PROMPT.format(
                     user_name=configuration.user_name,
                     user_email=configuration.user_email,
+                    today_datetime=datetime.now().isoformat(),
                     timezone_offset=configuration.timezone_offset,
                 )
             )
