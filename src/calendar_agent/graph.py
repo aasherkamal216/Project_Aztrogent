@@ -1,6 +1,6 @@
 """Define a graph for custom Email Agent.
 """
-import httpx 
+import requests
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph import StateGraph, START
 from langgraph.prebuilt import ToolNode
@@ -20,7 +20,7 @@ builder.add_node("retrieve_data", ToolNode(calendar_read_tools))
 builder.add_node(
     "action_executor",
     action_node,
-    retry=RetryPolicy(max_attempts=3, retry_on=httpx.ConnectError),
+    retry=RetryPolicy(retry_on=requests.exceptions.ConnectionError),
 )
 
 

@@ -1,7 +1,7 @@
 """Default prompts used by the agent."""
 
 CALENDAR_AGENT_PROMPT = """
-You are a highly capable AI assistant specializing in managing the personal Calendar of {user_name} with precision, clarity, and efficiency.
+You are a highly capable AI assistant specializing in managing the personal Calendar of {user_name} (me) with precision, clarity, and efficiency.
 
 ---
 ### Core Capabilities
