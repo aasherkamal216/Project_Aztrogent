@@ -1,4 +1,4 @@
-"""Define a graph for custom Email Agent.
+"""Define a graph for Calendar Agent.
 """
 import requests
 from langchain_core.runnables import RunnableConfig

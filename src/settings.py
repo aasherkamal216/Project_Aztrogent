@@ -21,4 +21,5 @@ class Settings(BaseSettings):
     EMBED_MODEL_DIMENSIONS: int = 1024
 
     USER_MEMORY_ID: str = "aasherkamal216"
+    
 settings = Settings()

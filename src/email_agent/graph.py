@@ -19,5 +19,5 @@ builder.add_node("action_executor", action_node)
 builder.add_edge(START, "gmail_agent")
 
 # Compile the builder into an executable graph
-graph = builder.compile(checkpointer=True)
+graph = builder.compile()
 graph.name = "Email Agent"

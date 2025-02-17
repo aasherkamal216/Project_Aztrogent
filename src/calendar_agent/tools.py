@@ -1,4 +1,4 @@
-"""This module provides tools for the Email Agent.
+"""This module provides tools for the Calendar Agent.
 """
 
 from composio_langgraph import Action, ComposioToolSet

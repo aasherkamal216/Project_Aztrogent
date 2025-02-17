@@ -12,25 +12,8 @@ from composio_langgraph import Action, ComposioToolSet
 import os
 from email_agent.configuration import Configuration
 
-
-async def search(
-    query: str, *, config: Annotated[RunnableConfig, InjectedToolArg]
-) -> Optional[list[dict[str, Any]]]:
-    """Search for general web results.
-
-    This function performs a search using the Tavily search engine, which is designed
-    to provide comprehensive, accurate, and trusted results. It's particularly useful
-    for answering questions about current events.
-    """
-    configuration = Configuration.from_runnable_config(config)
-    wrapped = TavilySearchResults(max_results=configuration.max_search_results)
-    result = await wrapped.ainvoke({"query": query})
-    return cast(list[dict[str, Any]], result)
-
-
-TOOLS: List[Callable[..., Any]] = [search]
-
 composio_toolset = ComposioToolSet(api_key=os.getenv("COMPOSIO_API_KEY"))
+
 gmail_tools = composio_toolset.get_tools(
     actions=[
         Action.GMAIL_SEND_EMAIL,
@@ -42,5 +25,4 @@ gmail_tools = composio_toolset.get_tools(
         Action.GMAIL_ADD_LABEL_TO_EMAIL,
     ]
 )
-
 tools_by_name = {tool.name: tool for tool in gmail_tools}

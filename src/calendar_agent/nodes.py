@@ -15,7 +15,7 @@ from langchain_core.runnables import RunnableConfig
 # Bind tools to the model
 agent_with_tools = model.bind_tools(calendar_read_tools + calendar_write_tools)
 
-## Main Calendar Agent
+####### Main Calendar Agent #######
 def calendar_agent(
     state: GoogleCalendarGraphState,
     config: RunnableConfig
@@ -41,7 +41,7 @@ def calendar_agent(
             tool_name = call.get("name")
 
             if tool_name in write_tools_by_name:
-                # Route to Post Writer Agent
+                # Route to Action Executor Node
                 return Command(
                     update={"messages": [response]}, 
                     goto="action_executor"
@@ -54,7 +54,7 @@ def calendar_agent(
     # End 
     return Command(update={"messages": [response]}, goto="__end__")
 
-## Action Node to execute tool calls
+####### Action Node to execute tool calls #######
 def action_node(
     state: GoogleCalendarGraphState,
     config: RunnableConfig

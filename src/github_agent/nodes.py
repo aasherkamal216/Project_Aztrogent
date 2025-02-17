@@ -15,7 +15,7 @@ from langchain_core.runnables import RunnableConfig
 ## Bind tools to the model
 agent_with_tools = model.bind_tools(github_tools)
 
-## Main GitHub Agent
+###### GitHub Agent ######
 def github_agent(
     state: GitHubGraphState,
     config: RunnableConfig,
@@ -40,7 +40,7 @@ def github_agent(
     return Command(update={"messages": [response]}, goto="__end__")
 
 
-## Action Node to execute tool calls
+###### Action Node to execute tool calls ######
 def action_node(
     state: GitHubGraphState
 ) -> Command[Literal["github_agent"]]:

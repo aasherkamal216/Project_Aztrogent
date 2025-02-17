@@ -10,8 +10,7 @@ from langchain_core.runnables import RunnableConfig, ensure_config
 
 from linkedin_agent import prompts
 
-
-dotenv.load_dotenv()
+_ : bool = dotenv.load_dotenv()
 
 @dataclass(kw_only=True)
 class Configuration:
@@ -29,12 +28,11 @@ class Configuration:
         default="google_genai/gemini-2.0-flash",
         metadata={
             "description": "The name of the language model to use for the agent's main interactions. "
-            "Should be in the form: provider/model-name."
         },
     )
 
     max_search_results: int = field(
-        default=4,
+        default=5,
         metadata={
             "description": "The maximum number of search results to return for each search query."
         },

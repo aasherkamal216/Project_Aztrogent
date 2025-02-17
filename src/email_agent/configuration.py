@@ -26,16 +26,9 @@ class Configuration:
         default="google_genai/gemini-2.0-flash",
         metadata={
             "description": "The name of the language model to use for the agent's main interactions. "
-            "Should be in the form: provider/model-name."
         },
     )
 
-    max_search_results: int = field(
-        default=6,
-        metadata={
-            "description": "The maximum number of search results to return for each search query."
-        },
-    )
     user_name: str = field(
         default="Aasher Kamal"
     )

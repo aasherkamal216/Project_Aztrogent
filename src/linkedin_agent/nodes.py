@@ -14,7 +14,7 @@ from linkedin_agent.tools import tools_by_name, linkedin_tools, POST_WRITER, sea
 ## Bind tools to the main agent
 main_linkedin_agent = llama_model.bind_tools([POST_WRITER] + linkedin_tools)
 
-## Main LinkedIn Agent
+###### Main LinkedIn Agent ######
 def linkedin_agent(
     state: LinkedInGraphState,
     config: RunnableConfig,
@@ -51,7 +51,7 @@ def linkedin_agent(
         goto="__end__"
     )
 
-## Post Writer Agent
+###### Post Writer Agent ######
 def post_writer(
     state: LinkedInGraphState
 ) -> Command[Literal["human_feedback_node"]]:
@@ -83,7 +83,7 @@ def post_writer(
         goto="human_feedback_node"
     )
 
-## Human Feedback Node
+###### Human Feedback Node ######
 def human_feedback(
     state: LinkedInGraphState,
 ) -> Command[Literal["linkedin_agent", "writer_agent"]]:
@@ -124,7 +124,7 @@ def human_feedback(
             goto="writer_agent",
         )
 
-## Action Node for uploading and deleting posts
+###### Action Node for uploading and deleting posts ######
 def action_node(state: LinkedInGraphState) -> Command[Literal["linkedin_agent"]]:
 
     def execute_tool(tool_call):

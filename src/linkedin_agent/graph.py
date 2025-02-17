@@ -22,6 +22,6 @@ builder.add_node("human_feedback_node", human_feedback)
 builder.add_edge(START, "linkedin_agent")
 
 # Compile the builder into an executable graph
-graph = builder.compile(checkpointer=MemorySaver())
+graph = builder.compile()
 
 graph.name = "LinkedIn Agent"
