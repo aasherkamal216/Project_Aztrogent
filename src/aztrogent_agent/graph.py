@@ -5,6 +5,7 @@ from typing import Dict, List, Literal, cast
 
 from langchain_core.messages import AIMessage
 from langchain_core.runnables import RunnableConfig
+
 from langgraph.graph import StateGraph, MessagesState, START, END
 from langgraph.pregel import BaseStore
 from langgraph.store.memory import InMemoryStore
@@ -20,6 +21,7 @@ from aztrogent_agent.nodes import (
 )
 from aztrogent_agent.tools import OTHER_TOOLS, COLLABORATE_WITH_TEAM, MEMORY_TOOLS
 from aztrogent_agent.utils import load_chat_model
+
 from src.settings import settings
 
 # Map team names to subgraph names
@@ -70,21 +72,12 @@ async def call_model(
     config: RunnableConfig,
     store: BaseStore
 ) -> Dict[str, List[AIMessage]]:
-    """Call the LLM powering our "agent".
 
-    This function prepares the prompt, initializes the model, and processes the response.
-
-    Args:
-        state (State): The current state of the conversation.
-        config (RunnableConfig): Configuration for the model run.
-
-    Returns:
-        dict: A dictionary containing the model's response message.
-    """
     configuration = Configuration.from_runnable_config(config)
-    user_id = config["configurable"]["user_id"]
 
-    model = load_chat_model(configuration.model).bind_tools(
+    model = load_chat_model(configuration.model)
+    # Bind tools to the model
+    model_with_tools = model.bind_tools(
         [COLLABORATE_WITH_TEAM, *MEMORY_TOOLS, *OTHER_TOOLS]
     )
 
@@ -99,23 +92,12 @@ async def call_model(
     # Get the model's response
     response = cast(
         AIMessage,
-        await model.ainvoke(
+        await model_with_tools.ainvoke(
             [{"role": "system", "content": system_message}, *state["messages"]], config
         ),
     )
 
-    # Handle the case when it's the last step and the model still wants to use a tool
-    if state["is_last_step"] and response.tool_calls:
-        return {
-            "messages": [
-                AIMessage(
-                    id=response.id,
-                    content="Sorry, I could not find an answer to your question in the specified number of steps.",
-                )
-            ]
-        }
-
-    # Return the model's response as a list to be added to existing messages
+    # Return the model's response
     return {"messages": [response]}
 
 
