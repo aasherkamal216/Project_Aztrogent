@@ -4,20 +4,29 @@ from datetime import datetime
 from github_agent.prompts import GITHUB_AGENT_PROMPT
 from github_agent.state import GitHubGraphState
 from github_agent.models import model
-from github_agent.tools import init_composio_toolset
+from github_agent.tools import github_tools, tools_by_name
 from github_agent.configuration import Configuration
 
 from langchain_core.messages import SystemMessage, ToolMessage
 from langgraph.types import Command, interrupt
 from langchain_core.runnables import RunnableConfig
 
-github_tools = init_composio_toolset()
+
 ## Bind tools to the model
 agent_with_tools = model.bind_tools(github_tools)
 
+def execute_tool(tool, args):
+    MAX_RETRIES = 3
+    retry_count = 0
 
-tools_by_name = {tool.name: tool for tool in github_tools}
-
+    while retry_count < MAX_RETRIES:
+        try:
+            output = tool.invoke(args)
+            return output
+        except Exception as e:
+            retry_count += 1
+            continue
+    return "Error: Tool Couldn't be called"
 
 ###### GitHub Agent ######
 def github_agent(
@@ -52,29 +61,45 @@ def action_node(
     tool_calls = state["messages"][-1].tool_calls
     result = []
 
+    # Iterate through each tool call that needs to be executed
     for call in tool_calls:
+        # Extract the tool name and arguments from the call
         tool_name = call["name"]
         args = call.get("args")
         
         while True:
-            ## Confirm action by user
+            # Prompt user to confirm the action
             action = interrupt({
-                "tool_name": tool_name.replace("_", " ").title(),
+                "tool_name": tool_name.replace("_", " ").title(),  # Format tool name for display
                 "confirmation": "Do you confirm the action? [y/n]: "
             })
-            
+
             if action.lower().strip() == "y":
-                output = tools_by_name[tool_name].invoke(args)
-                break
+                output = None
+                # Retry logic in case of failures
+                for _ in range(3):
+                    try:
+                        output = tools_by_name[tool_name].invoke(args)
+                        break 
+                    except Exception as e:
+                        continue  # skip the iteration
+                if output is None:
+                # Set error message if all retries failed
+                    output = f"Tool Call failed after 3 attempts."
+                
+                break # Break while loop
+
             elif action.lower().strip() == "n":
+                # User declined the action
                 output = "User declined to perform this action."
                 break
             else:
+                # Invalid input - prompt again
                 print("Please enter 'y' or 'n'")
                 continue
             
+        # Add the tool execution result to the list
         result.append(ToolMessage(content=output, tool_call_id=call["id"], name=tool_name))
-    
     return Command(
         goto="github_agent",
         update={"messages": result}
