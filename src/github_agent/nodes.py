@@ -75,19 +75,17 @@ def action_node(
             })
 
             if action.lower().strip() == "y":
-                output = None
                 # Retry logic in case of failures
-                for _ in range(3):
+                for attempt in range(3):
                     try:
                         output = tools_by_name[tool_name].invoke(args)
-                        break 
+                        break
                     except Exception as e:
-                        continue  # skip the iteration
-                if output is None:
-                # Set error message if all retries failed
-                    output = f"Tool Call failed after 3 attempts."
+
+                        if attempt == 2:  # Last attempt
+                            output = f"Tool call failed after 3 attempts. Last error: {str(e)}"
                 
-                break # Break while loop
+                break  # Break while loop after attempts complete
 
             elif action.lower().strip() == "n":
                 # User declined the action

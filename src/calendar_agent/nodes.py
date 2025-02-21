@@ -73,10 +73,20 @@ def action_node(
                 "tool_name": tool_name.replace("_", " ").title(),
                 "confirmation": "Do you confirm the action? [y/n]: "
             })
-            
+
             if action.lower().strip() == "y":
-                output = write_tools_by_name[tool_name].invoke(args)
-                break
+                # Retry logic in case of failures
+                for attempt in range(3):
+                    try:
+                        output = write_tools_by_name[tool_name].invoke(args)
+                        break
+                    except Exception as e:
+
+                        if attempt == 2:  # Last attempt
+                            output = f"Tool call failed after 3 attempts. Last error: {str(e)}"
+                
+                break  # Break while loop after attempts complete
+
             elif action.lower().strip() == "n":
                 output = "User declined to perform this action."
                 break
