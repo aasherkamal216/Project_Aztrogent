@@ -58,12 +58,11 @@ def action_node(
                 "tool_name": tool_name.replace("_", " ").title(),
                 "confirmation": "Do you confirm the action? [y/n]: "
             })
-            decision = list(action.values())[0].lower().strip()
             
-            if decision == "y":
+            if action.lower().strip() == "y":
                 output = tools_by_name[tool_name].invoke(args)
                 break
-            elif decision == "n":
+            elif action.lower().strip() == "n":
                 output = "User declined to perform this action."
                 break
             else:

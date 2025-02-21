@@ -94,7 +94,7 @@ def human_feedback(
     )
 
     # If user approves the post
-    if action["is_approved"].lower().strip() == "y":
+    if action.lower().strip() == "y":
         last_message = state["messages"][-1]  # LinkedIn Agent tool call
         tool_messages = []
 
@@ -116,7 +116,7 @@ def human_feedback(
                 goto="linkedin_agent"
             )
     # If user doesn't approve the post
-    elif action["is_approved"].lower().strip() == "n":
+    elif action.lower().strip() == "n":
         feedback = interrupt("Please provide feedback about the post: ")
         # Route back to writer agent with feedback
         return Command(
@@ -156,9 +156,9 @@ def action_node(state: LinkedInGraphState) -> Command[Literal["linkedin_agent"]]
 
             action = interrupt(prompt_data)
 
-            if action["confirmation"].lower().strip() == "y":
+            if action.lower().strip() == "y":
                 result.append(execute_tool(tool_call))
-            elif action["confirmation"].lower().strip() == "n":
+            elif action.lower().strip() == "n":
                 result.append(
                     ToolMessage(
                         content="User declined to upload the post.",

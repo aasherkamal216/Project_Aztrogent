@@ -4,16 +4,20 @@ from datetime import datetime
 from github_agent.prompts import GITHUB_AGENT_PROMPT
 from github_agent.state import GitHubGraphState
 from github_agent.models import model
-from github_agent.tools import tools_by_name, github_tools
+from github_agent.tools import init_composio_toolset
 from github_agent.configuration import Configuration
 
 from langchain_core.messages import SystemMessage, ToolMessage
 from langgraph.types import Command, interrupt
 from langchain_core.runnables import RunnableConfig
 
-
+github_tools = init_composio_toolset()
 ## Bind tools to the model
 agent_with_tools = model.bind_tools(github_tools)
+
+
+tools_by_name = {tool.name: tool for tool in github_tools}
+
 
 ###### GitHub Agent ######
 def github_agent(
@@ -58,12 +62,11 @@ def action_node(
                 "tool_name": tool_name.replace("_", " ").title(),
                 "confirmation": "Do you confirm the action? [y/n]: "
             })
-            decision = list(action.values())[0].lower().strip()
             
-            if decision == "y":
+            if action.lower().strip() == "y":
                 output = tools_by_name[tool_name].invoke(args)
                 break
-            elif decision == "n":
+            elif action.lower().strip() == "n":
                 output = "User declined to perform this action."
                 break
             else:
