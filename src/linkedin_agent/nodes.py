@@ -157,7 +157,14 @@ def action_node(state: LinkedInGraphState) -> Command[Literal["linkedin_agent"]]
             action = interrupt(prompt_data)
 
             if action.lower().strip() == "y":
-                result.append(execute_tool(tool_call))
+                # Retry logic in case of failures
+                for attempt in range(3):
+                    try:
+                        result.append(execute_tool(tool_call))
+                        break
+                    except Exception as e:
+                        continue
+
             elif action.lower().strip() == "n":
                 result.append(
                     ToolMessage(

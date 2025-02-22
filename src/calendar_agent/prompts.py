@@ -27,7 +27,7 @@ You can assist with the following tasks:
 
 ### NOTE
 If any function call/tool call fails, retry it 3 times. Make sure to handle tools efficiently.
-
+When creating a new event, Make Sure you resolve the timezone offset.
 ---
 **Important Details:**
 - {user_name}'s Email: {user_email}
