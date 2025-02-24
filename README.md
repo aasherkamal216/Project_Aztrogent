@@ -12,9 +12,9 @@ Project Aztrogent is an advanced AI Agent orchestration system that helps users 
   - Email Agent
   - Calendar Agent
 
-- **Intelligent Task Delegation**: Aztrogent agent intelligently delagates tasks to specialized agents
+- **Intelligent Task Delegation**: Aztrogent agent intelligently delagates tasks to specialized agents (represented as sub-graphs)
 - **Memory Management**: Built-in memory system for personalized interactions
-- **Human-in-the-Loop**: Confirmation & Feedback system for critical actions
+- **Human-in-the-Loop**: Confirmation & Feedback system for critical actions 
 - **Retry Mechanism**: Error handling with automatic retries for Tool Calling
 - **Web Search Integration**: Real-time information gathering capabilities
 
@@ -26,6 +26,36 @@ Project Aztrogent is an advanced AI Agent orchestration system that helps users 
     <td><img src="static/Aztrogent_Graph_Dark.png" alt="Graph (Expanded)" title="Graph (Expanded)"></td>
   </tr>
 </table>
+
+## Agents
+
+1. **Aztrogent:** It's the main agent that can delegate tasks to other specialized agents. It can search the web and manage memories about the user.
+
+2. **LinkedIn Agent:** This agent can handle tasks related to LinkedIn. It can upload, delete posts and get user profile information from LinkedIn. This agent can delegate post writing tasks to another sub-agent.
+
+3. **GitHub Agent:** This Agent can perform certain actions related to GitHub. It can:
+- Search repositories
+- Star repositories
+- View and manage personal repositories
+- Access user profile information
+- View starred repositories
+- Browse user projects
+- Get Followers of the user
+- List repositories for specific users
+
+4. **Email Agent:** It is specialized at completing Gmail related tasks. Thi agent can:
+- Send, read, and manage emails
+- Handle email threads and replies
+- Organize emails with labels
+- Create email drafts
+- Access user's profile information
+
+5. **Google Calendar Agent:** This agent can access and manage user's google calendar. It can:
+- Create, Update, Delete Events
+- Add events using natural language
+- Find Events
+- Find free slots on calendar
+- Get Current Data/Time
 
 ## 🛠️ Tech Stack
 
@@ -41,7 +71,7 @@ Project Aztrogent is an advanced AI Agent orchestration system that helps users 
 ## 📋 Prerequisites
 
 - Python 3.11+
-- Poetry package manager
+- Poetry or UV package manager
 - Required API keys:
   - Google API Key
   - Groq API Key
@@ -58,11 +88,17 @@ git clone https://github.com/yourusername/project-aztrogent.git
 cd aztrogent
 ```
 2. Create and Activate Virtual Environment:
+- For poetry, run:
 ```bash
 
 poetry shell
 ```
-3. Install dependencies using Poetry:
+- If you're using uv, run:
+```bash
+uv venv
+```
+
+3. Install dependencies using Poetry (or UV):
 ```bash
 poetry install
 ```
@@ -78,7 +114,7 @@ For using Composio tools, you need to add Integrations for the services being us
 ```bash
 composio add github likedin gmail googlecalendar
 ```
-5. Run the Project in LangGraph studio
+6. Run the Project in LangGraph studio
 - If you want to use in-memory version of LangGraph studio, run this command:
 ```bash
 poetry run langgraph dev
@@ -88,6 +124,9 @@ poetry run langgraph dev
 langgraph build
 langgraph up
 ```
+
+> [!NOTE]
+> In LangGraph Studio, each Agent can also be run and tested separately.
 
 ## 🔧 Configuration
 
