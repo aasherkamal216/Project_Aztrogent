@@ -43,7 +43,7 @@ class Configuration:
         default="aasherkamal786@gmail.com"
     )
     user_role: str = field(
-        default="GenAI Developer"
+        default="Generative & Agentic AI Developer"
     )
 
     @classmethod
