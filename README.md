@@ -29,7 +29,7 @@ Project Aztrogent is an advanced AI Agent orchestration system that helps users 
   </tr>
 </table>
 
-## Agents
+## Agents 🤖
 
 ### **1. Aztrogent** 
 It's the main agent that can delegate tasks to other specialized agents. It can search the web and manage memories about the user.
@@ -66,7 +66,7 @@ This agent can access and manage user's google calendar. It can:
 
 ## 🛠️ Tech Stack
 
-- **Frameworks**: LangGraph, LangMeme
+- **Frameworks**: LangGraph, LangMem
 - **Language Models**: 
   - Google Gemini 2.0 Flash
   - Llama 3.3 70b
@@ -84,7 +84,7 @@ This agent can access and manage user's google calendar. It can:
   - Groq API Key
   - Composio API Key
   - Tavily API Key
-  - Cohere API Key (You can also use OpenAI embeddings)
+  - Cohere API Key (or OpenAI key is using OpenAI embeddings)
   - LangSmith API Key
 
 ## 🚀 Installation
