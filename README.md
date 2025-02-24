@@ -29,11 +29,14 @@ Project Aztrogent is an advanced AI Agent orchestration system that helps users 
 
 ## Agents
 
-1. **Aztrogent:** It's the main agent that can delegate tasks to other specialized agents. It can search the web and manage memories about the user.
+### **1. Aztrogent** 
+It's the main agent that can delegate tasks to other specialized agents. It can search the web and manage memories about the user.
 
-2. **LinkedIn Agent:** This agent can handle tasks related to LinkedIn. It can upload, delete posts and get user profile information from LinkedIn. This agent can delegate post writing tasks to another sub-agent.
+### **2. LinkedIn Agent** 
+This agent can handle tasks related to LinkedIn. It can upload, delete posts and get user profile information from LinkedIn. This agent can delegate post writing tasks to another sub-agent.
 
-3. **GitHub Agent:** This Agent can perform certain actions related to GitHub. It can:
+### **3. GitHub Agent** 
+This Agent can perform certain actions related to GitHub. It can:
 - Search repositories
 - Star repositories
 - View and manage personal repositories
@@ -43,14 +46,16 @@ Project Aztrogent is an advanced AI Agent orchestration system that helps users 
 - Get Followers of the user
 - List repositories for specific users
 
-4. **Email Agent:** It is specialized at completing Gmail related tasks. Thi agent can:
+### **4. Email Agent** 
+It is specialized at completing Gmail related tasks. Thi agent can:
 - Send, read, and manage emails
 - Handle email threads and replies
 - Organize emails with labels
 - Create email drafts
 - Access user's profile information
 
-5. **Google Calendar Agent:** This agent can access and manage user's google calendar. It can:
+### **5. Google Calendar Agent** 
+This agent can access and manage user's google calendar. It can:
 - Create, Update, Delete Events
 - Add events using natural language
 - Find Events
