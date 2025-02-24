@@ -2,7 +2,9 @@
 
 Project Aztrogent is an advanced AI Agent orchestration system that helps users manage various tasks efficiently across multiple platforms including LinkedIn, GitHub, Gmail, and Google Calendar. Built with LangGraph and powered by Google Gemini, Aztrogent provides a seamless interface for task delegation and execution. Aztrogent learns from conversations, store important information about the user to improve its responses.
 
-<img src="static/Aztrogent_Pic.jpg" width=600 style="display: block; margin: 0 auto;">
+<p align="center">
+  <img src="static/Aztrogent_Pic.jpg" width=600>
+</p>
 
 ## 🚀 Features
 
