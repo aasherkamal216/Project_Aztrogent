@@ -8,17 +8,17 @@ Project Aztrogent is an advanced AI Agent orchestration system that helps users 
 
 ## 🚀 Features
 
-- **Multi-Agent Architecture**: Specialized agents for different services:
+- [x] **Multi-Agent Architecture**: Specialized agents for different services:
   - LinkedIn Agent
   - GitHub Agent
   - Email Agent
   - Calendar Agent
 
-- **Intelligent Task Delegation**: Aztrogent agent intelligently delagates tasks to specialized agents (represented as sub-graphs)
-- **Memory Management**: Built-in memory system for personalized interactions
-- **Human-in-the-Loop**: Confirmation & Feedback system for critical actions 
-- **Retry Mechanism**: Error handling with automatic retries for Tool Calling
-- **Web Search Integration**: Real-time information gathering capabilities
+- [x] **Intelligent Task Delegation**: Aztrogent agent intelligently delagates tasks to specialized agents (represented as sub-graphs)
+- [x] **Memory Management**: Built-in memory system for personalized interactions
+- [x] **Human-in-the-Loop**: Confirmation & Feedback system for critical actions 
+- [x] **Retry Mechanism**: Error handling with automatic retries for Tool Calling
+- [x] **Web Search Integration**: Real-time information gathering capabilities
 
 ## Architecture
 

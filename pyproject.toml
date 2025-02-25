@@ -29,7 +29,7 @@ dependencies = [
     "rich>=13.9.4",
     "tenacity>=9.0.0",
     "langgraph-checkpoint-postgres>=2.0.15",
-    "psycopg2>=2.9.10",
+
     "psycopg[binary,pool]>=3.2.4",
 ]
 
