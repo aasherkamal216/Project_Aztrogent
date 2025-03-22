@@ -91,7 +91,7 @@ This agent can access and manage user's google calendar. It can:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/project-aztrogent.git
+git clone https://github.com/aasherkamal216/project-aztrogent.git
 cd aztrogent
 ```
 2. Create and Activate Virtual Environment:
