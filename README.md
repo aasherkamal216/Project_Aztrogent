@@ -95,19 +95,17 @@ git clone https://github.com/yourusername/project-aztrogent.git
 cd aztrogent
 ```
 2. Create and Activate Virtual Environment:
-- For poetry, run:
-```bash
-
-poetry shell
-```
-- If you're using uv, run:
 ```bash
 uv venv
+# On macOS/Linux
+source .venv/bin/activate
+# On Windows
+.venv\Scripts\activate
 ```
 
-3. Install dependencies using Poetry (or UV):
+3. Install dependencies using UV:
 ```bash
-poetry install
+uv sync
 ```
 
 4. Set up environment variables:
@@ -122,14 +120,9 @@ For using Composio tools, you need to add Integrations for the services being us
 composio add github likedin gmail googlecalendar
 ```
 6. Run the Project in LangGraph studio
-- If you want to use in-memory version of LangGraph studio, run this command:
+- To use in-memory version of LangGraph studio, run this command:
 ```bash
-poetry run langgraph dev
-```
-- If you have docker installed, you can run the studio using the following command:
-```bash
-langgraph build
-langgraph up
+uv run langgraph dev
 ```
 
 > [!NOTE]
