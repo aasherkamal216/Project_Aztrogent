@@ -78,7 +78,7 @@ This agent can access and manage user's google calendar. It can:
 ## 📋 Prerequisites
 
 - Python 3.11+
-- Poetry or UV package manager
+- UV package manager
 - Required API keys:
   - Google API Key
   - Groq API Key
@@ -91,19 +91,16 @@ This agent can access and manage user's google calendar. It can:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/project-aztrogent.git
+git clone https://github.com/aasherkamal216/project-aztrogent.git
 cd aztrogent
 ```
 2. Create and Activate Virtual Environment:
 ```bash
 uv venv
-# On macOS/Linux
-source .venv/bin/activate
-# On Windows
-.venv\Scripts\activate
+.venv\Scripts\activate  # On Windows
 ```
 
-3. Install dependencies using UV:
+3. Install dependencies:
 ```bash
 uv sync
 ```
@@ -119,8 +116,7 @@ For using Composio tools, you need to add Integrations for the services being us
 ```bash
 composio add github likedin gmail googlecalendar
 ```
-6. Run the Project in LangGraph studio
-- To use in-memory version of LangGraph studio, run this command:
+6. Run the Project in LangGraph studio (In-memory version)
 ```bash
 uv run langgraph dev
 ```
